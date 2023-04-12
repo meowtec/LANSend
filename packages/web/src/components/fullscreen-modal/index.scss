@@ -1,0 +1,40 @@
+.full-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: #f9f9fa;
+  transform: translate3d(0, 0, 0);
+
+
+  &-enter {
+    transform: translate3d(0, 100%, 0);
+  }
+
+  &-enter-active {
+    transform: translate3d(0, 0, 0);
+    transition: transform 200ms;
+  }
+
+  &-exit {
+    transform: translate3d(0, 0, 0);
+  }
+
+  &-exit-active {
+    transform: translate3d(0, 100%, 0);
+    transition: transform 200ms;
+  }
+
+  &__close.button {
+    position: absolute;
+    padding: 8px;
+    right: 0;
+    top: 0;
+
+    svg {
+      font-size: 24px;
+      display: block;
+    }
+  }
+}

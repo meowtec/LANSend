@@ -1,0 +1,16 @@
+.chat {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+
+  &__user {
+    padding: 12px;
+    margin: 16px;
+  }
+
+  &__messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 0 16px;
+  }
+}

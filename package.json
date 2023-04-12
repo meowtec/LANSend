@@ -1,0 +1,30 @@
+{
+  "name": "lansend",
+  "private": true,
+  "type": "module",
+  "version": "1.0.0",
+  "description": "A simple chat room.",
+  "author": "meowtec <berton@gmail.com>",
+  "devDependencies": {
+    "@types/node": "^18.14.4",
+    "@typescript-eslint/eslint-plugin": "^5.57.0",
+    "@typescript-eslint/parser": "^5.57.0",
+    "eslint": "^8.37.0",
+    "eslint-config-airbnb": "^19.0.4",
+    "eslint-config-airbnb-typescript": "^17.0.0",
+    "eslint-import-resolver-typescript": "^3.5.4",
+    "eslint-plugin-import": "^2.27.5",
+    "eslint-plugin-jsx-a11y": "^6.7.1",
+    "eslint-plugin-react": "^7.32.2",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "typescript": "^4.9.5"
+  },
+  "scripts": {
+    "tsc": "tsc --build",
+    "lint:js": "eslint --ext .js,.jsx,.ts,.tsx packages",
+    "build:web": "cd packages/web && pnpm run build",
+    "lint:rs": "cargo fmt --check --all && cargo clippy",
+    "check": "pnpm run tsc && pnpm run lint:js && pnpm run build:web && pnpm run lint:rs"
+  },
+  "license": "MIT"
+}

@@ -1,0 +1,58 @@
+$tooltip-bg-color: #393b44;
+
+@keyframes fade-in {
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
+.tooltip {
+  position: relative;
+  color: #fff;
+  background: $tooltip-bg-color;
+  border-radius: 8px;
+  padding: 8px;
+  font-size: 14px;
+  visibility: hidden;
+  opacity: 0;
+  width: max-content;
+  z-index: 100;
+
+  &.is-visible {
+    visibility: visible;
+    opacity: 1;
+    animation: fade-in ease 0.3s;
+  }
+
+  &__arrow {
+    position: absolute;
+    color: $tooltip-bg-color;
+    // arrow 必须是方形
+    width: 16px;
+    height: 16px;
+
+    svg {
+      width: 100%;
+      height: 100%;
+    }
+  }
+
+  // tooltip 在目标元素底部
+  &[data-placement|="bottom"] {
+    .tooltip__arrow {
+      top: -10px;
+    }
+  }
+
+  // tooltip 在目标元素顶部
+  &[data-placement|="top"] {
+    .tooltip__arrow {
+      transform: rotate(180deg);
+      bottom: -10px;
+    }
+  }
+}

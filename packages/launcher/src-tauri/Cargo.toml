@@ -1,0 +1,39 @@
+[package]
+name = "lansend-launcher"
+version = "0.0.0"
+description = "A Tauri App"
+authors = ["meowtec"]
+license = ""
+repository = ""
+edition = "2021"
+rust-version = "1.64"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[lib]
+name = "app_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "1.2", features = [] }
+
+[dependencies]
+# "dialog-all", "shell-open"
+tauri = { version = "1.2", features = ["dialog-all", "shell-open", "system-tray"] }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+tokio = { version = "1.26", features = ["rt", "rt-multi-thread", "macros", "fs"] }
+anyhow = "1.0"
+log = "0.4"
+env_logger = "0.10"
+lansend-server = { path = "../../server" }
+local-ip-address = { git = "https://github.com/meowtec/local-ip-address.git", branch = "feat/unix" }
+
+[target.'cfg(target_os = "android")'.dependencies]
+ndk-context = "0.1.1"
+jni = "0.20.0"
+
+[features]
+# this feature is used for production builds or when `devPath` points to the filesystem
+# DO NOT REMOVE!!
+custom-protocol = ["tauri/custom-protocol"]

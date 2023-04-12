@@ -1,0 +1,12 @@
+[workspace]
+
+members = [
+    "packages/launcher/src-tauri",
+    "packages/server",
+]
+
+[profile.release]
+strip = true  # Automatically strip symbols from the binary.
+opt-level = "z"
+lto = true
+codegen-units = 1

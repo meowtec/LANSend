@@ -1,0 +1,20 @@
+.user-list {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 0;
+  padding: 16px;
+
+  > button {
+    border: 0;
+    background: none;
+    padding: 12px;
+    padding-bottom: 8px;
+    border-radius: 8px;
+    transition: all .3s;
+
+    &:hover {
+      background: #f4f4f4;
+      transform: scale(1.02);
+    }
+  }
+}

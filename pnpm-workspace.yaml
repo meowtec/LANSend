@@ -1,0 +1,4 @@
+packages:
+  - packages/shared
+  - packages/web
+  - packages/launcher

@@ -1,0 +1,17 @@
+.my-profile {
+  text-align: center;
+
+  h2 {
+    font-size: 18px;
+    margin: 0;
+    padding: 1.5em 0;
+  }
+
+  .avatar {
+    margin: 16px auto;
+  }
+
+  &__content {
+    padding: 32px 0;
+  }
+}
