@@ -85,19 +85,24 @@ fn get_netifas() -> Result<Vec<NetInterface>, String> {
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
-    env_logger::init();
-
     let server_state = ServerState(Arc::new(AsyncMutex::new(None)));
 
     let server_state_1 = server_state.clone();
 
     let app = tauri::Builder::default()
+        .plugin(
+            tauri_plugin_log::Builder::default()
+                .targets([LogTarget::LogDir, LogTarget::Stdout, LogTarget::Webview])
+                .build(),
+        )
         .setup(move |app| {
+            log::info!("setup app");
             #[cfg(not(target_os = "android"))]
             tray::init_tray(app);
 
             let config = app.config();
             let app_data_dir = platform::get_app_data_dir(&config)?;
+            log::info!("app data dir: {:?}", app_data_dir);
 
             server_state_1.init_with_app_dir(app_data_dir);
 
@@ -116,6 +121,7 @@ pub fn run() {
     app.run(move |_app_handle, event| {
         #[cfg(desktop)]
         if let RunEvent::ExitRequested { api, .. } = &event {
+            log::info!("exit requested");
             // Keep the event loop running even if all windows are closed
             // This allow us to catch system tray events when there is no window
             api.prevent_exit();
