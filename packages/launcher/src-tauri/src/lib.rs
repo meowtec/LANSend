@@ -2,6 +2,8 @@ mod ip;
 mod platform;
 #[cfg(not(target_os = "android"))]
 mod tray;
+#[cfg(not(target_os = "android"))]
+mod window;
 
 use std::{
     path::PathBuf,
@@ -11,8 +13,10 @@ use std::{
 use ip::NetInterface;
 use lansend_server::LansendServerMonitor;
 use local_ip_address::list_afinet_netifas;
-use tauri::{RunEvent, State};
+use tauri::{Manager, RunEvent, State};
+use tauri_plugin_log::LogTarget;
 use tokio::sync::{Mutex as AsyncMutex, MutexGuard as AsyncMutexGuard};
+use window::reopen_window;
 
 #[derive(Clone)]
 struct AppState(Arc<Mutex<Option<PathBuf>>>);
@@ -95,6 +99,10 @@ pub fn run() {
                 .targets([LogTarget::LogDir, LogTarget::Stdout, LogTarget::Webview])
                 .build(),
         )
+        .plugin(tauri_plugin_single_instance::init(|app, argv, cwd| {
+            log::info!("other instance: {:?} {:?}", argv, cwd);
+            reopen_window(&app.app_handle());
+        }))
         .setup(move |app| {
             log::info!("setup app");
             #[cfg(not(target_os = "android"))]

@@ -1,17 +1,8 @@
-use tauri::{AppHandle, Manager, SystemTray, SystemTrayEvent};
+use tauri::{SystemTray, SystemTrayEvent};
 
 use tauri::{CustomMenuItem, SystemTrayMenu};
 
-fn reopen_window(handle: &AppHandle) {
-    if handle.get_window("main").is_none() {
-        let win_config = handle.config().tauri.windows.get(0).unwrap().clone();
-
-        tauri::WindowBuilder::new(handle, "main", win_config.url)
-            .inner_size(win_config.width, win_config.height)
-            .build()
-            .unwrap();
-    }
-}
+use crate::window::reopen_window;
 
 pub fn init_tray(app: &tauri::App) {
     let handle = app.handle();

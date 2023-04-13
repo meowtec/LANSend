@@ -27,6 +27,7 @@ anyhow = "1.0"
 log = "0.4"
 lansend-server = { path = "../../server" }
 local-ip-address = { git = "https://github.com/meowtec/local-ip-address.git", branch = "feat/unix" }
+tauri-plugin-single-instance = { git = "https://github.com/tauri-apps/plugins-workspace", branch = "dev" }
 tauri-plugin-log = { git = "https://github.com/tauri-apps/plugins-workspace", branch = "dev" }
 
 [target.'cfg(target_os = "android")'.dependencies]
