@@ -1,8 +1,8 @@
 mod ip;
 mod platform;
-#[cfg(not(target_os = "android"))]
+#[cfg(desktop)]
 mod tray;
-#[cfg(not(target_os = "android"))]
+#[cfg(desktop)]
 mod window;
 
 use std::{
@@ -105,7 +105,7 @@ pub fn run() {
         }))
         .setup(move |app| {
             log::info!("setup app");
-            #[cfg(not(target_os = "android"))]
+            #[cfg(desktop)]
             tray::init_tray(app);
 
             let config = app.config();
