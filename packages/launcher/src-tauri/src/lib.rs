@@ -96,7 +96,7 @@ pub fn run() {
     let app = tauri::Builder::default()
         .plugin(
             tauri_plugin_log::Builder::default()
-                .targets([LogTarget::LogDir, LogTarget::Stdout, LogTarget::Webview])
+                .targets([LogTarget::LogDir, LogTarget::Stdout])
                 .build(),
         )
         .plugin(tauri_plugin_single_instance::init(|app, argv, cwd| {
