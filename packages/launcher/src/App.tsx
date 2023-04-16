@@ -6,6 +6,7 @@ import copy from 'copy-to-clipboard';
 import { shell } from '@tauri-apps/api';
 import Icon from '@meowtec/lansend-shared/components/icon';
 import IC_DONE from '#/assets/icons/done.svg';
+import IC_DOWN from '#/assets/icons/expand-down.svg';
 import { invokes } from './bridge/invoke';
 import { filterIP } from './utils/ip';
 import { useDelaySwitch } from './utils/use-delay-switch';
@@ -97,20 +98,23 @@ function App() {
         <div className="form-item">
           <label htmlFor={ipInputId}>
             <div className="form-label">IP</div>
-            <select
-              id={ipInputId}
-              value={ip}
-              className="address__ip"
-              placeholder="Select one address"
-              onChange={(e) => setIp(e.target.value)}
-            >
-              <option value="" disabled>Select address</option>
-              {networkInterfaces?.map((item) => (
-                <option value={item.ip}>
-                  {item.ip}
-                </option>
-              ))}
-            </select>
+            <div className="select">
+              {ip || 'Select IP'}
+              <Icon className="select-arrow" name={IC_DOWN} />
+              <select
+                id={ipInputId}
+                value={ip}
+                placeholder="Select IP"
+                onChange={(e) => setIp(e.target.value)}
+              >
+                <option value="" disabled>Select IP</option>
+                {networkInterfaces?.map((item) => (
+                  <option value={item.ip}>
+                    {item.ip}
+                  </option>
+                ))}
+              </select>
+            </div>
           </label>
 
         </div>

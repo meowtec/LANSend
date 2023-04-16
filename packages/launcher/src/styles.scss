@@ -64,7 +64,7 @@ label {
     }
   }
 
-  input, select {
+  input, .select {
     box-sizing: border-box;
     border: 0;
     height: 42px;
@@ -72,6 +72,27 @@ label {
     width: 0;
     outline: none;
     background: none;
+    font-size: 14px;
+  }
+
+  .select {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  select {
+    position: absolute;
+    opacity: 0;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  .select-arrow {
+    font-size: 20px;
   }
 }
 
