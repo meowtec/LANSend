@@ -96,6 +96,7 @@ pub fn run() {
     let app = tauri::Builder::default()
         .plugin(
             tauri_plugin_log::Builder::default()
+                .level(log::LevelFilter::Info)
                 .targets([LogTarget::LogDir, LogTarget::Stdout])
                 .build(),
         )
