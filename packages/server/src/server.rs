@@ -5,7 +5,11 @@ use crate::{
     file::{DataDir, FileManager},
 };
 use actix::Actor;
-use actix_session::{storage::CookieSessionStore, SessionMiddleware};
+use actix_session::{
+    config::{PersistentSession, TtlExtensionPolicy},
+    storage::CookieSessionStore,
+    SessionMiddleware,
+};
 use actix_web::{cookie::Key, dev::Server, web, App, HttpServer};
 use anyhow::anyhow;
 use std::{fmt::Debug, path::PathBuf};
@@ -64,6 +68,11 @@ impl LansendServer {
                 .wrap(
                     SessionMiddleware::builder(CookieSessionStore::default(), key.clone())
                         .cookie_secure(false)
+                        .session_lifecycle(
+                            PersistentSession::default()
+                                .session_ttl(actix_web::cookie::time::Duration::days(120))
+                                .session_ttl_extension_policy(TtlExtensionPolicy::OnEveryRequest),
+                        )
                         .build(),
                 )
                 .service(
