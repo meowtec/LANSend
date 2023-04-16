@@ -10,6 +10,7 @@ pub fn reopen_window(handle: &AppHandle) {
             let win_config = handle.config().tauri.windows.get(0).unwrap().clone();
 
             tauri::WindowBuilder::new(handle, "main", win_config.url)
+                .title(win_config.title)
                 .inner_size(win_config.width, win_config.height)
                 .build()
                 .unwrap();

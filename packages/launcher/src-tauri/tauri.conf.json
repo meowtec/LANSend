@@ -62,7 +62,7 @@
         "label": "main",
         "fullscreen": false,
         "resizable": true,
-        "title": "tauri-app",
+        "title": "LANSend",
         "width": 600,
         "height": 600
       }
