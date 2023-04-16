@@ -10,22 +10,38 @@ import IC_DOWN from '#/assets/icons/expand-down.svg';
 import { invokes } from './bridge/invoke';
 import { filterIP } from './utils/ip';
 import { useDelaySwitch } from './utils/use-delay-switch';
+import { safeLocalStorage } from './utils/storage';
+
+const FORM_VALUE_STORAGE_KEY = 'form-value';
 
 const portInputId = 'port-input';
 const ipInputId = 'ip-input';
 
+interface FormValue {
+  port: string;
+  ip: string;
+}
+
 function App() {
-  const [port, setPort] = useState('17133');
+  const [formValue, setFormValue] = useState<FormValue>(() => ({
+    port: '17133',
+    ip: '',
+    ...safeLocalStorage.get(FORM_VALUE_STORAGE_KEY),
+  }));
   const [processing, setIsProcessing] = useState(false);
   const { data: isRunning, mutate: mutateIsRunning } = useSWR('tauri:is_running', () => invokes.is_running(), {
     refreshInterval: 1000,
   });
-  const [ip, setIp] = useState('');
   const [copied, setCopied] = useDelaySwitch(1000);
 
   const { data: networkInterfaces } = useSWR('tauri:network_interfaces', () => invokes.get_netifas().then((list) => list.filter(filterIP)));
 
+  const { ip, port } = formValue;
   const numberPort = Number(port);
+
+  const setIp = (newIp: string) => setFormValue((prev) => ({ ...prev, ip: newIp }));
+
+  const setPort = (newPort: string) => setFormValue((prev) => ({ ...prev, port: newPort }));
 
   const portValid = useMemo(() => Number.isInteger(numberPort) && numberPort >= 1024 && numberPort <= 65535, [numberPort]);
 
@@ -67,6 +83,10 @@ function App() {
       setIp(networkInterfaces[0].ip);
     }
   }, [ip, networkInterfaces]);
+
+  useEffect(() => {
+    safeLocalStorage.set(FORM_VALUE_STORAGE_KEY, formValue);
+  }, [formValue]);
 
   return (
     <div className="container">
