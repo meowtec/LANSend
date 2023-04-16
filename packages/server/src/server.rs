@@ -48,7 +48,7 @@ impl LansendServer {
         let port = self.port;
         let data_dir = self.data_dir.clone();
         data_dir.ensure_dirs().await?;
-        log::info!("Data dir is: {:?}", &data_dir.path());
+        log::debug!("Data dir: {:?}", &data_dir.path());
 
         let key = match self.key.as_ref() {
             Some(key) => key.clone(),

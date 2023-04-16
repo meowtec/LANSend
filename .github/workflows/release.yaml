@@ -99,7 +99,7 @@ jobs:
       - name: Build the cli
         uses: taiki-e/upload-rust-binary-action@v1
         with:
-          bin: lansend-server
-          archive: cli-$tag-$target
+          bin: lansend
+          archive: lansend-cli-$tag-$target
           target: ${{ matrix.target }}
           token: ${{ secrets.GITHUB_TOKEN }}

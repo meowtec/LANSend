@@ -1,0 +1,13 @@
+[package]
+name = "lansend"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+clap = { version = "4.1", features = ["derive"] }
+env_logger = "0.10"
+tokio = { version = "1.26", features = ["rt", "rt-multi-thread", "macros", "fs"] }
+lansend-server = { path = "../server" }
+local-ip-address = { git = "https://github.com/meowtec/local-ip-address.git", branch = "feat/unix" }

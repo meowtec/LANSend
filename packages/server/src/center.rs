@@ -115,7 +115,7 @@ impl PostOfficeInner {
 
         let message = WsMessageToClient::Users(self.get_user_list());
 
-        log::info!("PostOffice actor broadcast to all users");
+        log::debug!("PostOffice actor broadcast to all users");
         self.send_message_to_all(&message);
     }
 }
@@ -179,7 +179,7 @@ impl Actor for PostOffice {
     type Context = Context<Self>;
 
     fn started(&mut self, ctx: &mut Self::Context) {
-        log::info!("PostOffice actor started");
+        log::debug!("PostOffice actor started");
         self.start_users_interval(ctx);
     }
 }

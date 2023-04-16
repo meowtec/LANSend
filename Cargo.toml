@@ -3,6 +3,7 @@
 members = [
     "packages/launcher/src-tauri",
     "packages/server",
+    "packages/cli",
 ]
 
 [profile.release]
