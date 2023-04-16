@@ -32,7 +32,15 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        platform: [macos-latest, ubuntu-20.04, windows-latest]
+        include:
+          - target: aarch64-apple-darwin
+            platform: macos-latest
+          - target: x86_64-apple-darwin
+            platform: macos-latest
+          - target: x86_64-unknown-linux-gnu
+            platform: ubuntu-20.04
+          - target: x86_64-pc-windows-msvc
+            platform: windows-latest
 
     runs-on: ${{ matrix.platform }}
 
@@ -74,7 +82,7 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Build the app
-        uses: tauri-apps/tauri-action@v0
+        uses: tauri-apps/tauri-action@dev
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TAURI_PRIVATE_KEY: ${{ secrets.TAURI_PRIVATE_KEY }}
@@ -86,3 +94,12 @@ jobs:
           releaseDraft: true
           prerelease: false
           projectPath: "packages/launcher"
+          args: --target ${{ matrix.target }}
+
+      - name: Build the cli
+        uses: taiki-e/upload-rust-binary-action@v1
+        with:
+          bin: lansend-server
+          archive: cli-$tag-$target
+          target: ${{ matrix.target }}
+          token: ${{ secrets.GITHUB_TOKEN }}
