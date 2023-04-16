@@ -9,7 +9,7 @@ static PROJECT_DIR: Dir = include_dir!("$CARGO_MANIFEST_DIR/../web/dist");
 #[get("/{filename:.*}")]
 pub async fn serve_static(req: HttpRequest) -> impl Responder {
     let file_path = req.match_info().query("filename");
-    println!("file_path: {}", file_path);
+    log::debug!("Serve file: {}", file_path);
 
     let file = PROJECT_DIR
         .get_file(file_path)

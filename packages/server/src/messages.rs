@@ -68,12 +68,12 @@ pub enum WsMessageToServer {
     Mail(MailWithReceivers),
 }
 
-/// Square Actor 收到的消息
+/// PostOffice Actor 收到的消息
 #[derive(Message, Debug)]
 #[rtype(result = "Vec<User>")]
 pub struct PostOfficeMessageGetUsers;
 
-/// Square Actor 收到的消息
+/// PostOffice Actor 收到的消息
 #[derive(Message, Debug)]
 #[rtype(result = "()")]
 pub enum PostOfficeMessage {

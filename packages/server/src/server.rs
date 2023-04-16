@@ -40,11 +40,11 @@ impl LansendServer {
     }
 
     pub async fn run(&self) -> Result<Server, anyhow::Error> {
-        log::info!("Serve http://127.0.0.1:{}", self.port);
+        log::info!("Serve at http://127.0.0.1:{}", self.port);
         let port = self.port;
         let data_dir = self.data_dir.clone();
         data_dir.ensure_dirs().await?;
-        log::info!("data_dir: {:?}", &data_dir.path());
+        log::info!("Data dir is: {:?}", &data_dir.path());
 
         let key = match self.key.as_ref() {
             Some(key) => key.clone(),

@@ -179,7 +179,6 @@ impl FileManager {
             });
 
         if !mime.as_ref().starts_with("text/html") {
-            log::debug!("set_content_type: {:?}", mime);
             named_file = named_file.set_content_type(mime);
         }
 

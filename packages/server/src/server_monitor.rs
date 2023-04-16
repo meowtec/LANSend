@@ -42,11 +42,11 @@ impl LansendServerMonitor {
         std::thread::spawn(move || {
             let rt = actix_web::rt::System::new();
             rt.block_on(async {
-                log::info!("server starting...");
+                log::info!("Server starting...");
                 let server = match lansend_server.run().await {
                     Ok(server) => server,
                     Err(e) => {
-                        log::error!("server start error: {}", e);
+                        log::error!("Server start error: {}", e);
                         tx.send(Err(e)).unwrap();
                         return;
                     }
@@ -56,7 +56,7 @@ impl LansendServerMonitor {
                 // server run and wait to exit
                 let server_exit_result = server.await;
                 // server exit
-                log::info!("server exit with {:?}.", server_exit_result);
+                log::info!("Server exit with {:?}.", server_exit_result);
                 server_handle.lock().await.take();
             });
         });

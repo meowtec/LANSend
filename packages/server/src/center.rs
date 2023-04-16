@@ -115,6 +115,7 @@ impl PostOfficeInner {
 
         let message = WsMessageToClient::Users(self.get_user_list());
 
+        log::info!("PostOffice actor broadcast to all users");
         self.send_message_to_all(&message);
     }
 }
@@ -166,8 +167,9 @@ impl PostOffice {
     }
 
     fn start_users_interval(&self, ctx: &mut Context<Self>) {
-        // 每 2s 检查一次用户列表，如果有变化发送消息
+        // check user list every 2s, if modified, broadcast to all users
         ctx.run_interval(Duration::from_secs(2), |act, _ctx| {
+            log::debug!("PostOffice actor check users");
             act.inner.lock().unwrap().broadcast_users_if_needed();
         });
     }
@@ -177,6 +179,7 @@ impl Actor for PostOffice {
     type Context = Context<Self>;
 
     fn started(&mut self, ctx: &mut Self::Context) {
+        log::info!("PostOffice actor started");
         self.start_users_interval(ctx);
     }
 }
@@ -193,7 +196,7 @@ impl Handler<PostOfficeMessage> for PostOffice {
     type Result = ();
 
     fn handle(&mut self, msg: PostOfficeMessage, _: &mut Self::Context) -> Self::Result {
-        log::info!("PostOffice handle {:?}", &msg);
+        log::debug!("PostOffice actor handle {:?}", &msg);
         let mut inner = self.inner.lock().unwrap();
 
         match msg {
@@ -202,12 +205,22 @@ impl Handler<PostOfficeMessage> for PostOffice {
                 session_id,
                 session_addr,
             } => {
+                log::info!(
+                    "Session add, session_id: {} , user_id: {}",
+                    &session_id,
+                    &user_id
+                );
                 inner.add_session(&user_id, &session_id, session_addr);
             }
             PostOfficeMessage::Disconnect {
                 user_id,
                 session_id,
             } => {
+                log::info!(
+                    "Session remove, session_id: {}, user_id: {}",
+                    &session_id,
+                    &user_id
+                );
                 inner.remove_session(&user_id, &session_id);
             }
             PostOfficeMessage::Mail {
@@ -216,6 +229,8 @@ impl Handler<PostOfficeMessage> for PostOffice {
                 mail,
             } => {
                 let self_cloned = self.clone();
+
+                log::debug!("PostOffice transmit mail from {}: {:?}", sender_id, &mail);
 
                 tokio::spawn(async move {
                     let may_mail_detail = self_cloned.get_detailed_mail(&mail.data).await;

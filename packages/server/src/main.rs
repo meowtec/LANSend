@@ -1,4 +1,5 @@
-use clap::{ArgAction, Parser};
+use clap::Parser;
+use env_logger::Env;
 use lansend_server::LansendServer;
 
 /// Run Lansend server
@@ -6,11 +7,11 @@ use lansend_server::LansendServer;
 #[command(author, version, about, long_about = None)]
 struct Args {
     /// Output verbose information
-    #[arg(short, long, action = ArgAction::Count)]
-    verbose: u8,
+    #[arg(short, long)]
+    verbose: bool,
 
     /// Server port
-    #[arg(short, long, default_value_t = 8080)]
+    #[arg(short, long, default_value_t = 17133)]
     port: u16,
 }
 
@@ -18,11 +19,11 @@ struct Args {
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let args = Args::parse();
 
-    println!("args: {:?}", args);
+    let log_level = if args.verbose { "debug" } else { "info" };
 
-    env_logger::init();
+    env_logger::Builder::from_env(Env::default().default_filter_or(log_level)).init();
 
-    LansendServer::new(10221, std::env::temp_dir().join("airpost"))
+    LansendServer::new(args.port, std::env::temp_dir().join("lansend"))
         .run()
         .await?
         .await?;

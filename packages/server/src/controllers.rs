@@ -56,14 +56,14 @@ pub async fn user_info(session: Session) -> ResponseResult<User> {
 pub async fn update_user_info(
     payload: web::Json<User>,
     session: Session,
-    square: web::Data<Addr<PostOffice>>,
+    office: web::Data<Addr<PostOffice>>,
 ) -> ResponseResult<User> {
     let mut user = User::get_from_session(&session).map_err(anyhow::Error::from)?;
     // Update current user info, payload.id will be excluded
     user.update(payload.into_inner());
     user.insert_to_session(&session)
         .map_err(anyhow::Error::from)?;
-    square
+    office
         .send(PostOfficeMessage::UpdateUser(user.clone()))
         .await
         .map_err(anyhow::Error::from)?;
@@ -72,11 +72,12 @@ pub async fn update_user_info(
 }
 
 #[get("/users")]
-pub async fn user_list(square: web::Data<Addr<PostOffice>>) -> ResponseResult<Vec<User>> {
-    let users = square
+pub async fn user_list(office: web::Data<Addr<PostOffice>>) -> ResponseResult<Vec<User>> {
+    let users = office
         .send(PostOfficeMessageGetUsers)
         .await
         .map_err(anyhow::Error::from)?;
+    log::debug!("GET /users: users count: {}", users.len());
     MyResponse::ok(users)
 }
 
@@ -85,14 +86,18 @@ pub async fn websocket(
     req: HttpRequest,
     session: Session,
     stream: web::Payload,
-    square: web::Data<Addr<PostOffice>>,
+    office: web::Data<Addr<PostOffice>>,
 ) -> Result<HttpResponse, actix_web::Error> {
     let user = User::get_from_session(&session)?;
 
-    log::info!("to square send UpdateUser");
-    square.do_send(PostOfficeMessage::UpdateUser(user.clone()));
+    log::info!(
+        "CONNECT /ws: websocket connected from user: {} {}",
+        user.user_name,
+        user.id
+    );
+    office.do_send(PostOfficeMessage::UpdateUser(user.clone()));
     let rep = ws::start(
-        WsSession::new(user.id, square.get_ref().clone()),
+        WsSession::new(user.id, office.get_ref().clone()),
         &req,
         stream,
     )?;
