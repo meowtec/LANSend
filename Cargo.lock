@@ -2203,6 +2203,7 @@ dependencies = [
  "serde_repr",
  "sled",
  "tokio",
+ "woothee",
 ]
 
 [[package]]
@@ -4806,6 +4807,16 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b68db261ef59e9e52806f688020631e987592bd83619edccda9c47d42cde4f6c"
 dependencies = [
  "toml 0.5.11",
+]
+
+[[package]]
+name = "woothee"
+version = "0.13.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "896174c6a4779d4d7d4523dd27aef7d46609eda2497e370f6c998325c6bf6971"
+dependencies = [
+ "lazy_static",
+ "regex",
 ]
 
 [[package]]

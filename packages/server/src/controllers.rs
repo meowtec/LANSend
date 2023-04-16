@@ -22,12 +22,13 @@ pub struct UploadQuery {
 
 #[post("/file/upload")]
 pub async fn file_upload(
+    req: HttpRequest,
     payload: web::Payload,
     query: web::Query<UploadQuery>,
     file_manager: web::Data<FileManager>,
     session: Session,
 ) -> ResponseResult<UserFile> {
-    let user = User::get_from_session(&session).map_err(anyhow::Error::from)?;
+    let user = User::get_from_session(&session, &req).map_err(anyhow::Error::from)?;
     let file = file_manager
         .add_from_stream(payload, query.filename.to_string(), user.id)
         .await?;
@@ -47,18 +48,19 @@ pub async fn file_download(
 }
 
 #[get("/user-info")]
-pub async fn user_info(session: Session) -> ResponseResult<User> {
-    let user = User::get_from_session(&session).map_err(anyhow::Error::from)?;
+pub async fn user_info(req: HttpRequest, session: Session) -> ResponseResult<User> {
+    let user = User::get_from_session(&session, &req).map_err(anyhow::Error::from)?;
     MyResponse::ok(user)
 }
 
 #[post("/user-info")]
 pub async fn update_user_info(
+    req: HttpRequest,
     payload: web::Json<User>,
     session: Session,
     office: web::Data<Addr<PostOffice>>,
 ) -> ResponseResult<User> {
-    let mut user = User::get_from_session(&session).map_err(anyhow::Error::from)?;
+    let mut user = User::get_from_session(&session, &req).map_err(anyhow::Error::from)?;
     // Update current user info, payload.id will be excluded
     user.update(payload.into_inner());
     user.insert_to_session(&session)
@@ -88,7 +90,7 @@ pub async fn websocket(
     stream: web::Payload,
     office: web::Data<Addr<PostOffice>>,
 ) -> Result<HttpResponse, actix_web::Error> {
-    let user = User::get_from_session(&session)?;
+    let user = User::get_from_session(&session, &req)?;
 
     log::info!(
         "CONNECT /ws: websocket connected from user: {} {}",
