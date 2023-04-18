@@ -16,11 +16,11 @@ runCssDts(srcDir, {
 }).catch(console.error);
 
 if (isDev) {
-  void execa('cargo', ['run'], {
+  void execa('cargo', ['run', '--', '-p', '10221'], {
     stdio: 'inherit',
-    cwd: path.resolve(rootDir, '../server'),
+    cwd: path.resolve(rootDir, '../cli'),
     env: {
-      RUST_LOG: 'info',
+      RUST_LOG: process.env.RUST_LOG ?? 'info',
     },
   });
 }

@@ -21,7 +21,7 @@
   },
   "scripts": {
     "dev:app": "cd packages/launcher && pnpm run tauri dev",
-    "dev:cli": "cd packages/cli && cargo run",
+    "dev:cli": "cd packages/web && pnpm run dev",
     "tsc": "tsc --build",
     "lint:js": "eslint --ext .js,.jsx,.ts,.tsx packages",
     "build:web": "cd packages/web && pnpm run build",
