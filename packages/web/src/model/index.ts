@@ -10,6 +10,7 @@ import {
   pushMail,
   replacePreMail,
   enterChatWithUser,
+  enterMyProfile,
   exitChat,
   exitMyProfile,
 } from './reducers';
@@ -37,6 +38,7 @@ export const reducers = {
     pushMail,
     replacePreMail,
     enterChatWithUser,
+    enterMyProfile,
     exitChat,
     exitMyProfile,
   }, useAppStoreBase),

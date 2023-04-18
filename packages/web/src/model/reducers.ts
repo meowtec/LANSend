@@ -74,13 +74,12 @@ export const replacePreMail = defineMutateReducer((draft, mail: MailSendDetailed
 });
 
 export const enterChatWithUser = defineMutateReducer((draft, userId: string) => {
-  const isMe = draft.userInfo?.id === userId;
-  if (isMe) {
-    draft.showMyProfile = true;
-  } else {
-    draft.showChat = true;
-    draft.chatUserId = userId;
-  }
+  draft.showChat = true;
+  draft.chatUserId = userId;
+});
+
+export const enterMyProfile = defineMutateReducer((draft) => {
+  draft.showMyProfile = true;
 });
 
 export const exitChat = defineMutateReducer((draft) => {

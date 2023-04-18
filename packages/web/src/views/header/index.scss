@@ -1,0 +1,22 @@
+.header {
+  padding: 8px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #fff;
+
+  &__logo {
+    height: 14px;
+  }
+
+  &__avatar-btn {
+    padding: 0;
+    border: none;
+    background: none;
+  }
+
+  &__avatar {
+    width: 28px;
+    height: 28px;
+  }
+}

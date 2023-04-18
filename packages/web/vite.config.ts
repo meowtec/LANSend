@@ -36,6 +36,7 @@ export default defineConfig({
     react(),
     createSvgSpritePlugin({
       symbolId: 'icon-[name]-[hash]',
+      include: '**/icons/*.svg',
     }),
   ],
   server: {

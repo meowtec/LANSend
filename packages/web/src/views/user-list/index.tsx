@@ -11,7 +11,7 @@ interface UserListProps {
 export default function UserList({ myUserId, users, onUserClick }: UserListProps) {
   return (
     <ul className="user-list">
-      {users.map((user) => (
+      {users.map((user) => user.id !== myUserId && (
         <button
           key={user.id}
           type="button"
