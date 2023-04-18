@@ -12,4 +12,3 @@ mod utils;
 
 pub use server::LansendServer;
 pub use server_monitor::LansendServerMonitor;
-pub use utils::create_key_from_str;
