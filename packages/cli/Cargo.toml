@@ -9,5 +9,6 @@ edition = "2021"
 clap = { version = "4.1", features = ["derive"] }
 env_logger = "0.10"
 tokio = { version = "1.26", features = ["rt", "rt-multi-thread", "macros", "fs"] }
+actix-web = "4"
 lansend-server = { path = "../server" }
 local-ip-address = { git = "https://github.com/meowtec/local-ip-address.git", branch = "feat/unix" }

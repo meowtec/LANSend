@@ -60,10 +60,9 @@ impl LansendServer {
         let file_manager = FileManager::new(data_dir.files_dir(), db)
             .ensure_dir()
             .await?;
+        let post_office = PostOffice::new(file_manager.clone()).start();
 
         let http_server = HttpServer::new(move || {
-            let post_office = PostOffice::new(file_manager.clone()).start();
-
             App::new()
                 .wrap(
                     SessionMiddleware::builder(CookieSessionStore::default(), key.clone())
@@ -84,7 +83,7 @@ impl LansendServer {
                         .service(controllers::file_download)
                         .service(controllers::update_user_info),
                 )
-                .app_data(web::Data::new(post_office))
+                .app_data(web::Data::new(post_office.clone()))
                 .service(controllers::websocket)
                 .service(serve_static)
         })
