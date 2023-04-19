@@ -1,8 +1,0 @@
-CREATE TABLE IF NOT EXISTS file (
-  id TEXT PRIMARY KEY NOT NULL,
-  name TEXT NOT NULL,
-  user_id TEXT NOT NULL,
-  size INTEGER NOT NULL,
-  created_at TEXT NOT NULL,
-  updated_at TEXT NOT NULL
-);
