@@ -1,6 +1,6 @@
 import { castDraft, Draft } from 'immer';
+import { userInfoDictFromList } from '#/utils/user';
 import { MailReceive, MailSendDetailed, User } from '../types';
-import { fromPairs } from '../utils/object';
 import { createDefineMutateReducerFor } from '../utils/zustand';
 import { ChatChannel, AppState } from './types';
 
@@ -24,6 +24,7 @@ const eachReceiversChannel = (draft: Draft<AppState>, receivers: readonly string
     } else {
       const newChannel: Draft<ChatChannel> = castDraft({
         userId: receiver,
+        unreadCount: 0,
         messages: [],
       });
       channels.push(castDraft(newChannel));
@@ -51,16 +52,20 @@ export const updateUserInfo = defineMutateReducer((draft, user: User) => {
 
 export const updateUsers = defineMutateReducer((draft, users: User[]) => {
   draft.users = users;
-  Object.assign(draft.userInfoDict, fromPairs(users.map((user) => [user.id, user])));
+  Object.assign(draft.userInfoDict, userInfoDictFromList(users));
 });
 
 export const pushMail = defineMutateReducer((draft, mail: MailReceive | MailSendDetailed) => {
-  const channelUserIds = 'sender' in mail
+  const isIncoming = 'sender' in mail;
+  const channelUserIds = isIncoming
     ? [mail.sender]
     : mail.receivers;
 
-  eachReceiversChannel(draft, channelUserIds, (channel) => {
-    channel.messages.push(castDraft(mail));
+  eachReceiversChannel(draft, channelUserIds, (draftChannel) => {
+    draftChannel.messages.push(castDraft(mail));
+    if (isIncoming && draft.chatUserId !== draftChannel.userId) {
+      draftChannel.unreadCount += 1;
+    }
   });
 });
 
@@ -74,7 +79,6 @@ export const replacePreMail = defineMutateReducer((draft, mail: MailSendDetailed
 });
 
 export const enterChatWithUser = defineMutateReducer((draft, userId: string) => {
-  draft.showChat = true;
   draft.chatUserId = userId;
 });
 
@@ -83,9 +87,16 @@ export const enterMyProfile = defineMutateReducer((draft) => {
 });
 
 export const exitChat = defineMutateReducer((draft) => {
-  draft.showChat = false;
+  draft.chatUserId = null;
 });
 
 export const exitMyProfile = defineMutateReducer((draft) => {
   draft.showMyProfile = false;
+});
+
+export const clearUnreadCount = defineMutateReducer((draft, userId: string) => {
+  const channel = draft.channels.find((c) => c.userId === userId);
+  if (channel) {
+    channel.unreadCount = 0;
+  }
 });

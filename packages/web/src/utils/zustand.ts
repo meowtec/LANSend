@@ -5,7 +5,7 @@ export type Reducer<State, Payload> = (state: State, payload: Payload) => State;
 
 export type MutateReducer<State, Payload> = (state: Draft<State>, payload: Payload) => void;
 
-export type GetBoundReducer<E extends Reducer<any, unknown>> = E extends Reducer<any, infer P>
+export type GetBoundReducer<E extends Reducer<any, any>> = E extends Reducer<any, infer P>
   ? (payload: P) => void
   : never;
 
@@ -13,10 +13,10 @@ export type GetBoundMutateReducer<E extends MutateReducer<any, unknown>> = E ext
   ? (payload: P) => void
   : never;
 
-export type Effect<Store extends StoreLike, Payload> = (store: Store, payload: Payload) => void;
+export type Effect<Store extends StoreLike, Payload, RT> = (store: Store, payload: Payload) => RT;
 
-export type GetBoundEffect<E> = E extends Effect<any, infer P>
-  ? (payload: P) => void
+export type GetBoundEffect<E> = E extends Effect<any, infer P, infer RT>
+  ? (payload: P) => RT
   : never;
 
 type StoreLike<State = any> = {
@@ -47,13 +47,13 @@ export function createDefineMutateReducerFor<State>() {
 }
 
 /// just type inference for effect
-export function defineEffect<Store extends StoreLike, Payload = void>(e: Effect<Store, Payload>): Effect<Store, Payload> {
+export function defineEffect<Store extends StoreLike, Payload = void, RT = void>(e: Effect<Store, Payload, RT>): Effect<Store, Payload, RT> {
   return e;
 }
 
 /// type inference for effect with specific store
 export function createDefineEffectFor<Store extends StoreLike>() {
-  return <Payload = void>(e: Effect<Store, Payload>) => defineEffect(e);
+  return <Payload = void, RT = void>(e: Effect<Store, Payload, RT>) => defineEffect(e);
 }
 
 export function bindReducer<State, Payload>(reducer: Reducer<State, Payload>, store: StoreLike<State>) {
@@ -83,14 +83,14 @@ export function bindMutateReducers<State, Reducers extends Record<string, Mutate
   return mapValues(reducers, (reducer, key) => bindMutateReducer(reducer, store, key)) as BoundMutateReducers<State, Reducers>;
 }
 
-export function bindEffect<Store extends StoreLike, Payload>(
-  effect: Effect<Store, Payload>,
+export function bindEffect<Store extends StoreLike, Payload, RT>(
+  effect: Effect<Store, Payload, RT>,
   store: Store,
 ) {
   return (payload: Payload) => effect(store, payload);
 }
 
-export function bindEffects<Store extends StoreLike, E extends Record<string, Effect<Store, any>>>(
+export function bindEffects<Store extends StoreLike, E extends Record<string, Effect<Store, any, any>>>(
   effects: E,
   store: Store,
 ) {

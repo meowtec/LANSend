@@ -1,4 +1,5 @@
 import { useCallback, useEffect } from 'react';
+import equal from 'fast-deep-equal';
 import { useAppStore } from './model';
 import UserList from './views/user-list';
 import ChatConnected from './views/chat';
@@ -14,8 +15,13 @@ export default function App() {
     users: state.users,
   }));
 
+  const unreadCounts = useAppStore(useAppStore.selectors.selectUnreadCounts, equal);
+
   useEffect(() => {
-    void useAppStore.effects.fetchAndListen();
+    useAppStore.effects.connect();
+    return () => {
+      useAppStore.effects.disconnect();
+    };
   }, []);
 
   const handleUserClick = useCallback((userId: string) => {
@@ -35,6 +41,7 @@ export default function App() {
       <UserList
         myUserId={myUserId}
         users={users}
+        unreadCounts={unreadCounts}
         onUserClick={handleUserClick}
       />
       <ChatConnected />

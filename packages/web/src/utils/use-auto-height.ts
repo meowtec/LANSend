@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react';
+import { useLatest } from 'react-use';
 import { watchProp } from './proxy-get-set';
 
 const DEFAULT_MAX_ROWS = 5;
@@ -35,9 +36,9 @@ export function setAutoHeight(
   )}px`;
 }
 
-export function watchSetAutoHeight(textarea: HTMLTextAreaElement) {
+export function watchSetAutoHeight(textarea: HTMLTextAreaElement, options: SetAutoHeightOptions = {}) {
   const handleChange = () => {
-    setAutoHeight(textarea);
+    setAutoHeight(textarea, options);
   };
 
   watchValuePropChange(textarea);
@@ -52,18 +53,19 @@ export function watchSetAutoHeight(textarea: HTMLTextAreaElement) {
   };
 }
 
-export function useTextAreaAutoHeight(options: { maxRows?: number } = {}) {
+export function useTextAreaAutoHeight(options: SetAutoHeightOptions = {}) {
   const ref = useRef<HTMLTextAreaElement>(null);
+  const optionsRef = useLatest(options);
 
   useEffect(() => {
     const el = ref.current;
     if (el && !el.dataset.autoHeight) {
       el.dataset.autoHeight = 'true';
-      return watchSetAutoHeight(el);
+      return watchSetAutoHeight(el, optionsRef.current);
     }
 
     return undefined;
-  }, [ref]);
+  }, [optionsRef]);
 
   return { ref };
 }

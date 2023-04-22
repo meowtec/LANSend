@@ -49,7 +49,10 @@ impl PostOfficeInner {
     fn get_user_list(&self) -> Vec<User> {
         self.users
             .iter()
-            .filter_map(|(_, user)| user.user.clone())
+            .filter_map(|(_, user)| match user.sessions.is_empty() {
+                true => None,
+                false => user.user.clone(),
+            })
             .collect::<Vec<User>>()
     }
 

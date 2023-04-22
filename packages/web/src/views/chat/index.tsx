@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 import { ChatChannel } from '#/model/types';
 import { useAppStore } from '#/model';
 import { User } from '#/types';
@@ -43,7 +43,6 @@ function Chat({
 }
 
 export default function ChatConnected() {
-  const showChat = useAppStore((state) => state.showChat);
   const channelInfo = useAppStore(useAppStore.selectors.selectCurrentChannel);
   const userId = channelInfo?.userId;
 
@@ -53,12 +52,18 @@ export default function ChatConnected() {
     }
   }, [userId]);
 
+  useEffect(() => {
+    if (userId) {
+      useAppStore.reducers.clearUnreadCount(userId);
+    }
+  }, [userId]);
+
   return (
     <FullscreenModal
-      visible={showChat && channelInfo !== null}
+      visible={userId != null}
       onClose={useAppStore.reducers.exitChat}
     >
-      {channelInfo ? (
+      {channelInfo?.channel ? (
         <Chat
           userInfo={channelInfo.userInfo ?? null}
           channel={channelInfo.channel ?? null}

@@ -1,6 +1,7 @@
 import {
   ClientMessageType,
   ServerMessageType,
+  WS,
   WebSocketClientMessage,
   WebSocketClientMessageMap,
   WebSocketServerMessage,
@@ -40,13 +41,10 @@ export function parseWebSocketMessageBody<T extends WebSocketServerMessage | Web
   return null;
 }
 
-export function createWs() {
+export function createWs(): WS {
   const ws = new WebSocket(`ws://${window.location.host}/ws`);
 
-  const sendMessage = <T extends ClientMessageType>(
-    type: T,
-    content: WebSocketClientMessageMap[T],
-  ) => {
+  const sendMessage: WS['sendMessage'] = (type, content) => {
     ws.send(createWebSocketMessageBody(type, content));
   };
 

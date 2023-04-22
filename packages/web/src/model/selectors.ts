@@ -1,4 +1,6 @@
 import { createSelector } from 'reselect';
+import { channelDictFromList } from '#/utils/user';
+import { fromPairs } from '#/utils/object';
 import { AppState, CurrentChannelInfo } from './types';
 
 export function createSelectors() {
@@ -33,6 +35,16 @@ export function createSelectors() {
     ),
   );
 
+  const selectChannelDict = createSelector(
+    selectChannels,
+    channelDictFromList,
+  );
+
+  const selectUnreadCounts = createSelector(
+    selectChannels,
+    (channels) => fromPairs(channels.map((channel) => [channel.userId, channel.unreadCount])),
+  );
+
   const selectCurrentChannel = createSelector(
     selectChatUserId,
     selectChatChannel,
@@ -47,6 +59,8 @@ export function createSelectors() {
   );
 
   return {
+    selectChannelDict,
     selectCurrentChannel,
+    selectUnreadCounts,
   };
 }

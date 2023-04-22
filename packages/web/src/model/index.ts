@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { bindEffects, bindMutateReducers } from '#/utils/zustand';
+import { WS } from '#/types';
 import { initialState } from './default';
 import { AppState } from './types';
 import {
@@ -13,8 +14,11 @@ import {
   enterMyProfile,
   exitChat,
   exitMyProfile,
+  clearUnreadCount,
 } from './reducers';
-import { fetchAndListen, modifyUserInfo, sendMessage } from './effects';
+import {
+  connect, disconnect, modifyUserInfo, sendMessage,
+} from './effects';
 import { createSelectors } from './selectors';
 
 const useAppStoreBase = create<AppState>()(persist(() => initialState, {
@@ -23,6 +27,7 @@ const useAppStoreBase = create<AppState>()(persist(() => initialState, {
 }));
 
 export type UseAppStoreExtended = typeof useAppStoreBase & {
+  ws: WS | null;
   selectors: typeof selectors;
   reducers: typeof reducers;
   effects: typeof effects;
@@ -41,6 +46,7 @@ export const reducers = {
     enterMyProfile,
     exitChat,
     exitMyProfile,
+    clearUnreadCount,
   }, useAppStoreBase),
 };
 
@@ -49,12 +55,14 @@ export type Selectors = typeof selectors;
 export type Reducers = typeof reducers;
 
 export const effects = bindEffects({
-  fetchAndListen,
+  connect,
+  disconnect,
   sendMessage,
   modifyUserInfo,
 }, useAppStoreBase as UseAppStoreExtended);
 
 export const useAppStore: UseAppStoreExtended = Object.assign(useAppStoreBase, {
+  ws: null,
   selectors,
   reducers,
   effects,

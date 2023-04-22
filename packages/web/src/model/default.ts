@@ -8,6 +8,5 @@ export const initialState: AppState = {
   uploadProgressDict: {},
   longTexts: {},
   chatUserId: null,
-  showChat: false,
   showMyProfile: false,
 };

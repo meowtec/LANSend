@@ -65,11 +65,11 @@ const iconExtsDict = {
   ],
 };
 
-const extIconDict = Object.entries(iconExtsDict).reduce((acc, [icon, exts]) => {
+const extIconDict = Object.entries(iconExtsDict).reduce((draftAcc, [icon, exts]) => {
   exts.forEach((ext) => {
-    acc[ext] = icon;
+    draftAcc[ext] = icon;
   });
-  return acc;
+  return draftAcc;
 }, {} as Record<string, string>);
 
 export function getFileIcon(filename: string): string {

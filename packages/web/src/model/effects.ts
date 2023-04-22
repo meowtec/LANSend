@@ -1,20 +1,21 @@
+import { nanoid } from 'nanoid';
 import { MAX_LONG_TEXT_LENGTH, MAX_TEXT_LENGTH } from '#/constants';
 import { addPreLongText, uploadFile } from '#/services/file';
 import { fetchUserInfo, fetchUsers, updateUserInfo } from '#/services/user';
 import { createWs, parseWebSocketMessageBody } from '#/utils/ws';
 import { createDefineEffectFor } from '#/utils/zustand';
-import { nanoid } from 'nanoid';
 import {
   MailSendDetailed, MailType, User, WebSocketServerMessage,
 } from '../types';
 import type { UseAppStoreExtended } from '.';
 
-const ws = createWs();
-
 const defineEffect = createDefineEffectFor<UseAppStoreExtended>();
 
-// eslint-disable-next-line @typescript-eslint/no-misused-promises
-export const fetchAndListen = defineEffect(async (store) => {
+export const connect = defineEffect((store) => {
+  const ws = createWs();
+
+  store.ws = ws;
+
   ws.instance.addEventListener('message', (event) => {
     console.log('message:', event);
     const message = parseWebSocketMessageBody<WebSocketServerMessage>(event.data as string);
@@ -35,12 +36,20 @@ export const fetchAndListen = defineEffect(async (store) => {
     }
   });
 
-  const [users, userInfo] = await Promise.all([
-    fetchUsers(),
-    fetchUserInfo(),
-  ]);
-  store.reducers.updateUsers(users);
-  store.reducers.updateUserInfo(userInfo);
+  ws.instance.addEventListener('open', () => {
+    void Promise.all([
+      fetchUsers(),
+      fetchUserInfo(),
+    ]).then(([users, userInfo]) => {
+      store.reducers.updateUsers(users);
+      store.reducers.updateUserInfo(userInfo);
+    });
+  });
+});
+
+export const disconnect = defineEffect((store) => {
+  store.ws?.instance.close();
+  store.ws = null;
 });
 
 export interface SendMessagePayload {
@@ -63,7 +72,7 @@ export const sendMessage = defineEffect((store, { userId, message }: SendMessage
     };
 
     store.reducers.pushMail(mail);
-    ws.sendMessage('mail', {
+    store.ws?.sendMessage('mail', {
       ...mail,
       data: {
         type: MailType.text,
@@ -116,7 +125,7 @@ export const sendMessage = defineEffect((store, { userId, message }: SendMessage
           },
         });
 
-        ws.sendMessage('mail', {
+        store.ws?.sendMessage('mail', {
           ...mail,
           data: {
             type: mailType,
@@ -135,9 +144,6 @@ export const sendMessage = defineEffect((store, { userId, message }: SendMessage
 export const modifyUserInfo = defineEffect((store, userInfo: User) => {
   const currentUserInfo = store.getState().userInfo;
   updateUserInfo(userInfo)
-    .then((newUserInfo) => {
-
-    })
     .catch((err) => {
       console.error('updateUserInfo error:', err);
       if (currentUserInfo) {

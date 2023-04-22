@@ -18,3 +18,10 @@ export function mapValues<T extends object, R>(
 
   return result;
 }
+
+export function arrayToMap<T>(array: readonly T[], keyFn: (item: T) => string): Record<string, T> {
+  return array.reduce((draftMap, item) => {
+    draftMap[keyFn(item)] = item;
+    return draftMap;
+  }, {} as Record<string, T>);
+}
