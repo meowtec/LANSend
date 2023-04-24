@@ -63,7 +63,7 @@ export default function ChatConnected() {
       visible={userId != null}
       onClose={useAppStore.reducers.exitChat}
     >
-      {channelInfo?.channel ? (
+      {channelInfo?.userId ? (
         <Chat
           userInfo={channelInfo.userInfo ?? null}
           channel={channelInfo.channel ?? null}
