@@ -78,8 +78,8 @@ function App() {
   };
 
   useEffect(() => {
-    // if ip is empty, set it to the first ip
-    if (!ip && networkInterfaces?.length) {
+    // if ip not in the list, set it to the first
+    if (networkInterfaces && !networkInterfaces.some((item) => item.ip === ip)) {
       setIp(networkInterfaces[0].ip);
     }
   }, [ip, networkInterfaces]);
