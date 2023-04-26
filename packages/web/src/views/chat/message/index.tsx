@@ -1,12 +1,15 @@
 import clsx from 'clsx';
-import { useRef, useState } from 'react';
-import { useClickAway, useLongPress } from 'react-use';
+import { useRef } from 'react';
+import {
+  useClickAway, useLongPress,
+} from 'react-use';
 import useMergedRef from '@react-hook/merged-ref';
 import copy from 'copy-to-clipboard';
 import { MailReceive, MailSendDetailed, MailType } from '#/types';
 import Tooltip, { useTooltip } from '#/components/tooltip';
 import { useLongText } from '#/services/file';
 import { download } from '#/utils/download';
+import { useBoolDelay } from '#/utils/use-bool-delay';
 import { showToast } from '#/components/toast/command';
 import FileMessage from './file-message';
 import TextMessage from './text-message';
@@ -23,7 +26,10 @@ const longPressOptions = {
 
 export default function Message({ message }: MessageProps) {
   const ref = useRef<HTMLDivElement | null>(null);
-  const [showDialog, setShowDialog] = useState(false);
+  const [tooltipVisible, tooltipVisibleMutates] = useBoolDelay(false, {
+    toTrueDelay: 0,
+    toFalseDelay: 500,
+  });
   const isReceive = 'sender' in message;
   const { data } = message;
 
@@ -46,20 +52,26 @@ export default function Message({ message }: MessageProps) {
   });
 
   const onLongPress = () => {
-    setShowDialog(true);
+    tooltipVisibleMutates.setTrue();
+  };
+
+  const handleMouseEnter = () => {
+    tooltipVisibleMutates.setTrue();
+  };
+
+  const handleMouseLeave = () => {
+    tooltipVisibleMutates.delayToFalse();
   };
 
   const longPressEvent = useLongPress(onLongPress, longPressOptions);
 
   useClickAway(ref, () => {
-    setTimeout(() => {
-      setShowDialog(false);
-    }, 500);
+    tooltipVisibleMutates.delayToFalse();
   });
 
   const handleCopy = () => {
     copy(text);
-    setShowDialog(false);
+    tooltipVisibleMutates.setFalse();
     showToast({
       content: 'Copied',
     });
@@ -68,7 +80,7 @@ export default function Message({ message }: MessageProps) {
   const handleSave = () => {
     if (data.type !== MailType.file) return;
     download(`/api/file/${data.content.id}`, data.content.name);
-    setShowDialog(false);
+    tooltipVisibleMutates.setFalse();
   };
 
   const mergedRef = useMergedRef(ref, tooltipProps.floating.reference);
@@ -78,6 +90,8 @@ export default function Message({ message }: MessageProps) {
       <div
         {...longPressEvent}
         ref={mergedRef}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
         className={clsx('message', isReceive ? 'is-receive' : 'is-send')}
       >
         {
@@ -91,9 +105,11 @@ export default function Message({ message }: MessageProps) {
             )
         }
       </div>
-      {showDialog && (
+      {tooltipVisible && (
         <Tooltip
           {...tooltipProps}
+          onMouseEnter={handleMouseEnter}
+          onMouseLeave={handleMouseLeave}
           visible
         >
           {
