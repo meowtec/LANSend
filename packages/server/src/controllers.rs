@@ -11,13 +11,20 @@ use crate::{
 use actix::Addr;
 use actix_files::NamedFile;
 use actix_session::Session;
-use actix_web::{get, post, web, HttpRequest, HttpResponse};
+use actix_web::{get, post, web, HttpRequest, HttpResponse, Responder};
 use actix_web_actors::ws;
 use serde::Deserialize;
 
 #[derive(Deserialize)]
 pub struct UploadQuery {
     pub filename: String,
+}
+
+#[get("/ping")]
+pub async fn ping() -> impl Responder {
+    HttpResponse::Ok()
+        .append_header(("Access-Control-Allow-Origin", "*"))
+        .body("pong")
 }
 
 #[post("/file/upload")]

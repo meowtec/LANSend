@@ -8,9 +8,9 @@ import Icon from '@meowtec/lansend-shared/components/icon';
 import IC_DONE from '#/assets/icons/done.svg';
 import IC_DOWN from '#/assets/icons/expand-down.svg';
 import { invokes } from './bridge/invoke';
-import { filterIP } from './utils/ip';
 import { useDelaySwitch } from './utils/use-delay-switch';
 import { safeLocalStorage } from './utils/storage';
+import { useLocalIpList } from './utils/use-available-ip';
 
 const FORM_VALUE_STORAGE_KEY = 'form-value';
 
@@ -34,7 +34,7 @@ function App() {
   });
   const [copied, setCopied] = useDelaySwitch(1000);
 
-  const { data: networkInterfaces } = useSWR('tauri:network_interfaces', () => invokes.get_netifas().then((list) => list.filter(filterIP)));
+  const ipList = useLocalIpList(formValue.port, isRunning ?? false);
 
   const { ip, port } = formValue;
   const numberPort = Number(port);
@@ -78,11 +78,16 @@ function App() {
   };
 
   useEffect(() => {
-    // if ip not in the list, set it to the first
-    if (networkInterfaces && !networkInterfaces.some((item) => item.ip === ip)) {
-      setIp(networkInterfaces[0].ip);
+    // if ip is empty or not available, set it to the first available ip
+    if (!ipList?.length) return;
+
+    if (
+      !ip
+      || !ipList.some((item) => item.ip === ip)
+    ) {
+      setIp(ipList[0].ip);
     }
-  }, [ip, networkInterfaces]);
+  }, [ip, ipList]);
 
   useEffect(() => {
     safeLocalStorage.set(FORM_VALUE_STORAGE_KEY, formValue);
@@ -128,7 +133,7 @@ function App() {
                 onChange={(e) => setIp(e.target.value)}
               >
                 <option value="" disabled>Select IP</option>
-                {networkInterfaces?.map((item) => (
+                {ipList?.map((item) => (
                   <option value={item.ip}>
                     {item.ip}
                   </option>

@@ -77,6 +77,7 @@ impl LansendServer {
                 .service(
                     web::scope("/api")
                         .app_data(web::Data::new(file_manager.clone()))
+                        .service(controllers::ping)
                         .service(controllers::user_info)
                         .service(controllers::user_list)
                         .service(controllers::file_upload)
