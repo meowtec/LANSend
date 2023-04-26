@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import equal from 'fast-deep-equal';
 import { useAppStore } from './model';
 import UserList from './views/user-list';
@@ -14,6 +14,8 @@ export default function App() {
     myUserId: state.userInfo?.id,
     users: state.users,
   }));
+
+  const otherUsers = useMemo(() => users.filter((user) => user.id !== myUserId), [myUserId, users]);
 
   const unreadCounts = useAppStore(useAppStore.selectors.selectUnreadCounts, equal);
 
@@ -38,12 +40,17 @@ export default function App() {
         myUserId={myUserId}
         onMyProfileClick={useAppStore.reducers.enterMyProfile}
       />
-      <UserList
-        myUserId={myUserId}
-        users={users}
-        unreadCounts={unreadCounts}
-        onUserClick={handleUserClick}
-      />
+      {otherUsers.length === 0 ? (
+        <div className="users-empty">
+          Waiting for other users to join...
+        </div>
+      ) : (
+        <UserList
+          users={otherUsers}
+          unreadCounts={unreadCounts}
+          onUserClick={handleUserClick}
+        />
+      ) }
       <ChatConnected />
       <MyProfileConnected />
     </div>
