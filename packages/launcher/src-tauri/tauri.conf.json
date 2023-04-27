@@ -21,7 +21,7 @@
       }
     },
     "systemTray": {
-      "iconPath": "icons/icon_tray.png",
+      "iconPath": "icons/icon.png",
       "iconAsTemplate": true
     },
     "bundle": {
