@@ -1,0 +1,4 @@
+/src/main/java/com/meowtec/lansend_launcher/generated
+/src/main/jniLibs/**/*.so
+/tauri.build.gradle.kts
+/proguard-tauri.pro

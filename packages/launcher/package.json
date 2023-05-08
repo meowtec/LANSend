@@ -13,7 +13,7 @@
     "@emotion/styled": "^11.11.0",
     "@fontsource/roboto": "^4.5.8",
     "@meowtec/lansend-shared": "workspace:*",
-    "@tauri-apps/api": "^1.3.0",
+    "@tauri-apps/api": "2.0.0-alpha.3",
     "clsx": "^1.2.1",
     "copy-to-clipboard": "^3.3.3",
     "qrcode.react": "^3.1.0",
@@ -22,7 +22,7 @@
     "swr": "^2.1.5"
   },
   "devDependencies": {
-    "@tauri-apps/cli": "^1.3.1",
+    "@tauri-apps/cli": "2.0.0-alpha.8",
     "@types/node": "^18.16.5",
     "@types/react": "^18.2.6",
     "@types/react-dom": "^18.2.4",

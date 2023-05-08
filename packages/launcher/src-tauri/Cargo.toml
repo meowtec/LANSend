@@ -15,11 +15,10 @@ name = "app_lib"
 crate-type = ["staticlib", "cdylib", "rlib"]
 
 [build-dependencies]
-tauri-build = { version = "1.3", features = [] }
+tauri-build = { version = "2.0.0-alpha.4", features = [] }
 
 [dependencies]
-# "dialog-all", "shell-open"
-tauri = { version = "1.3", features = ["dialog-all", "icon-png", "shell-open", "system-tray"] }
+tauri = { version = "2.0.0-alpha.8", features = ["dialog-all", "icon-png", "shell-open", "system-tray"] }
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 tokio = { version = "1.26", features = ["rt", "rt-multi-thread", "macros", "fs"] }
@@ -27,8 +26,10 @@ anyhow = "1.0"
 log = "0.4"
 lansend-server = { path = "../../server" }
 local-ip-address = { git = "https://github.com/meowtec/local-ip-address.git", branch = "feat/unix" }
-tauri-plugin-single-instance = { git = "https://github.com/tauri-apps/plugins-workspace", branch = "v1" }
-tauri-plugin-log = { git = "https://github.com/tauri-apps/plugins-workspace", branch = "v1" }
+tauri-plugin-log = { git = "https://github.com/tauri-apps/plugins-workspace", branch = "v2" }
+
+[target.'cfg(any(target_os = "windows", target_os = "linux"))'.dependencies]
+tauri-plugin-single-instance = { git = "https://github.com/tauri-apps/plugins-workspace", branch = "v2" }
 
 [features]
 # this feature is used for production builds or when `devPath` points to the filesystem

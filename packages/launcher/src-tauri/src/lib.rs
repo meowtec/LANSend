@@ -15,8 +15,6 @@ use local_ip_address::list_afinet_netifas;
 use tauri::{Manager, RunEvent, State};
 use tauri_plugin_log::LogTarget;
 use tokio::sync::{Mutex as AsyncMutex, MutexGuard as AsyncMutexGuard};
-use window::reopen_window;
-
 #[derive(Clone)]
 struct AppState(Arc<Mutex<Option<PathBuf>>>);
 
@@ -91,26 +89,28 @@ pub fn run() {
     let server_state = ServerState(Arc::new(AsyncMutex::new(None)));
 
     let server_state_1 = server_state.clone();
+    let mut app_builder = tauri::Builder::default().plugin(
+        tauri_plugin_log::Builder::default()
+            .level(log::LevelFilter::Info)
+            .targets([LogTarget::LogDir, LogTarget::Stdout])
+            .build(),
+    );
 
-    let app = tauri::Builder::default()
-        .plugin(
-            tauri_plugin_log::Builder::default()
-                .level(log::LevelFilter::Info)
-                .targets([LogTarget::LogDir, LogTarget::Stdout])
-                .build(),
-        )
-        .plugin(tauri_plugin_single_instance::init(|app, argv, cwd| {
+    #[cfg(any(target_os = "windows", target_os = "linux"))]
+    {
+        app_builder = app_builder.plugin(tauri_plugin_single_instance::init(|app, argv, cwd| {
             log::info!("other instance: {:?} {:?}", argv, cwd);
-            reopen_window(&app.app_handle());
-        }))
+            window::reopen_window(&app.app_handle());
+        }));
+    }
+
+    app_builder = app_builder
         .setup(move |app| {
             log::info!("setup app");
             #[cfg(desktop)]
             tray::init_tray(app);
 
-            let config = app.config();
-            let app_data_dir = tauri::api::path::app_data_dir(&config)
-                .map_or(Err(anyhow::anyhow!("no data dir")), Ok)?;
+            let app_data_dir = app.path().app_data_dir()?;
             log::info!("app data dir: {:?}", app_data_dir);
 
             server_state_1.init_with_app_dir(app_data_dir);
@@ -123,7 +123,9 @@ pub fn run() {
             stop_server,
             is_running,
             get_netifas
-        ])
+        ]);
+
+    let app = app_builder
         .build(tauri::generate_context!())
         .expect("error while building tauri application");
 
