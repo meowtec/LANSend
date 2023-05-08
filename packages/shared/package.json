@@ -9,6 +9,6 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@types/react": "^18.0.28"
+    "@types/react": "^18.2.6"
   }
 }

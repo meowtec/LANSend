@@ -1,5 +1,4 @@
 mod ip;
-mod platform;
 #[cfg(desktop)]
 mod tray;
 #[cfg(desktop)]
@@ -110,7 +109,8 @@ pub fn run() {
             tray::init_tray(app);
 
             let config = app.config();
-            let app_data_dir = platform::get_app_data_dir(&config)?;
+            let app_data_dir = tauri::api::path::app_data_dir(&config)
+                .map_or(Err(anyhow::anyhow!("no data dir")), Ok)?;
             log::info!("app data dir: {:?}", app_data_dir);
 
             server_state_1.init_with_app_dir(app_data_dir);
