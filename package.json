@@ -20,11 +20,11 @@
     "typescript": "^5.0.4"
   },
   "scripts": {
-    "dev:app": "cd packages/launcher && pnpm run tauri dev",
-    "dev:cli": "cd packages/web && pnpm run dev",
+    "dev:app": "pnpm run --dir packages/launcher dev:app",
+    "dev:cli": "pnpm run --dir packages/web dev",
     "tsc": "tsc --build",
     "lint:js": "eslint --ext .js,.jsx,.ts,.tsx packages",
-    "build:web": "cd packages/web && pnpm run build",
+    "build:web": "pnpm run --dir packages/web build",
     "lint:rs": "cargo fmt --check --all && cargo clippy",
     "check": "pnpm run tsc && pnpm run lint:js && pnpm run build:web && pnpm run lint:rs"
   },

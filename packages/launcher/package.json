@@ -4,9 +4,11 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "cd ../web && pnpm run build && cd ../launcher && vite build",
+    "build": "pnpm run --dir ../web build && vite build",
     "preview": "vite preview",
-    "tauri": "tauri"
+    "tauri": "tauri",
+    "dev:app": "pnpm run tauri dev",
+    "build:app": "pnpm run tauri build"
   },
   "dependencies": {
     "@emotion/react": "^11.11.0",
