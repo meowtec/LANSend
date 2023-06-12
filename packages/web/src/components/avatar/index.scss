@@ -13,7 +13,7 @@
   // red dot
   &__badge {
     position: absolute;
-    bottom: 0;
+    top: 0;
     right: 0;
     min-width: 18px;
     height: 18px;
@@ -22,5 +22,24 @@
     border-radius: 50%;
     background-color: #ff0000;
     color: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+
+  &__status {
+    position: absolute;
+    bottom: 0px;
+    right: 0px;
+    width: 10px;
+    height: 10px;
+    border-radius: 10px;
+    color: #fff;
+
+    &.__online {
+      background: #00dd00;
+    }
+
+    &.__offline {
+      background: #ff0000;
+    }
   }
 }

@@ -7,6 +7,7 @@ import './index.scss';
 interface AvatarProps {
   id: string;
   badge?: number;
+  online?: boolean;
   className?: string;
 }
 
@@ -16,7 +17,9 @@ function getAvatarColors(id: string) {
   return new Array(3 + size).fill(0).map(() => `#${Math.floor(rand() * 0xffffff).toString(16).padStart(6, '0')}`);
 }
 
-export default function Avatar({ id, badge, className }: AvatarProps) {
+export default function Avatar({
+  id, badge, online, className,
+}: AvatarProps) {
   const colors = useMemo(() => getAvatarColors(id), [id]);
 
   return (
@@ -27,6 +30,9 @@ export default function Avatar({ id, badge, className }: AvatarProps) {
         colors={colors}
         size={60}
       />
+      {online != null ? (
+        <span className={clsx('avatar__status', online ? '__online' : '__offline')} />
+      ) : null}
       {badge ? (
         <span className="avatar__badge">{badge}</span>
       ) : null}

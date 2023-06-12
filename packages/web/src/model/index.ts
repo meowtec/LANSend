@@ -24,6 +24,10 @@ import { createSelectors } from './selectors';
 const useAppStoreBase = create<AppState>()(persist(() => initialState, {
   name: 'chat-storage',
   version: 0,
+  partialize: (state) => ({
+    ...state,
+    chatUserId: null,
+  }),
 }));
 
 export type UseAppStoreExtended = typeof useAppStoreBase & {

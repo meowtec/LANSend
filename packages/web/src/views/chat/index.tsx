@@ -9,7 +9,8 @@ import InputBox from './input-box';
 import './index.scss';
 
 interface ChatProps {
-  userInfo: User | null,
+  userInfo: User | null;
+  online: boolean;
   channel: ChatChannel | null;
   onSubmit: (content: File | string) => void;
 }
@@ -20,7 +21,7 @@ const userPlaceholder: User = {
 };
 
 function Chat({
-  channel, userInfo, onSubmit,
+  channel, userInfo, online, onSubmit,
 }: ChatProps) {
   return (
     <div className="chat">
@@ -28,6 +29,7 @@ function Chat({
         <UserItem
           className="chat__user"
           isMe={false}
+          online={online}
           user={userInfo ?? userPlaceholder}
         />
       </div>
@@ -67,6 +69,7 @@ export default function ChatConnected() {
         <Chat
           userInfo={channelInfo.userInfo ?? null}
           channel={channelInfo.channel ?? null}
+          online={channelInfo.isOnline}
           onSubmit={handleSubmit}
         />
       ) : null}
