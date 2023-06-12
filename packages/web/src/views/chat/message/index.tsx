@@ -27,8 +27,8 @@ const longPressOptions = {
 export default function Message({ message }: MessageProps) {
   const ref = useRef<HTMLDivElement | null>(null);
   const [tooltipVisible, tooltipVisibleMutates] = useBoolDelay(false, {
-    toTrueDelay: 0,
-    toFalseDelay: 500,
+    toTrueDelay: 300,
+    toFalseDelay: 300,
   });
   const isReceive = 'sender' in message;
   const { data } = message;
@@ -56,7 +56,7 @@ export default function Message({ message }: MessageProps) {
   };
 
   const handleMouseEnter = () => {
-    tooltipVisibleMutates.setTrue();
+    tooltipVisibleMutates.delayToTrue();
   };
 
   const handleMouseLeave = () => {
