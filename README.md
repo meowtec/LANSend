@@ -1,5 +1,7 @@
 # LANSend
 
+**THIS PROJECT IS UNDER DEVELOPMENT.**
+
 LANSend is a cross-platform app that enables the transfer of messages and files between devices within the same local network via a web browser.
 
 It consists of two components:
@@ -26,10 +28,10 @@ lansend -p 10086
 #### For GUI app
 
 Open the app then click _start_.
-![](./screenshots/app.png)
+![screenshot for launcher](./screenshots/app.png)
 
 ### Visit web app
 
-Open http://YOUR_IP:PORT in browser.
+Open http://YOUR_IP:PORT in browser and send messages!
 
-![](./screenshots/web.png)
+![screenshot for web](./screenshots/web.png)
