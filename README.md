@@ -15,12 +15,21 @@ Install command-line tool or a desktop app from releases page.
 
 ### Start chat server
 
-#### for command-line
+#### For command-line
+
+run:
 
 ```
 lansend -p 10086
 ```
 
-#### for GUI app
+#### For GUI app
 
 Open the app then click _start_.
+![](./screenshots/app.png)
+
+### Visit web app
+
+Open http://YOUR_IP:PORT in browser.
+
+![](./screenshots/web.png)
