@@ -12,7 +12,9 @@ pub fn init_tray(app: &tauri::App) {
 
     #[cfg(target_os = "macos")]
     {
-        tray = tray.with_icon(Icon::Raw(include_bytes!("../icons/icon_tray.png").to_vec()));
+        tray = tray.with_icon(tauri::Icon::Raw(
+            include_bytes!("../icons/icon_tray.png").to_vec(),
+        ));
     }
 
     tray.on_event(move |event| match event {
