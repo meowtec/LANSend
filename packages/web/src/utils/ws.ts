@@ -1,7 +1,7 @@
+import { EventEmitter } from 'eventemitter3';
 import {
   ClientMessageType,
   ServerMessageType,
-  WS,
   WebSocketClientMessage,
   WebSocketClientMessageMap,
   WebSocketServerMessage,
@@ -41,15 +41,92 @@ export function parseWebSocketMessageBody<T extends WebSocketServerMessage | Web
   return null;
 }
 
-export function createWs(): WS {
-  const ws = new WebSocket(`ws://${window.location.host}/ws`);
+interface Events {
+  message: WebSocketServerMessage;
+  open: void;
+  close: void;
+}
 
-  const sendMessage: WS['sendMessage'] = (type, content) => {
-    ws.send(createWebSocketMessageBody(type, content));
-  };
+export class WS extends EventEmitter<keyof Events> {
+  private status : 'lost' | 'connecting' | 'connected' | 'closed' = 'lost';
 
-  return {
-    instance: ws,
-    sendMessage,
-  };
+  private instance?: WebSocket;
+
+  private sendingMessageQueue: string[] = [];
+
+  constructor() {
+    super();
+
+    this.connect();
+  }
+
+  on<T extends keyof Events>(type: T, listener: (payload: Events[T]) => void): this {
+    return super.on(type, listener);
+  }
+
+  emit<T extends keyof Events>(type: T, payload: Events[T]): boolean {
+    return super.emit(type, payload);
+  }
+
+  sendMessage<T extends ClientMessageType>(
+    type: T,
+    content: WebSocketClientMessageMap[T],
+  ) {
+    const message = createWebSocketMessageBody(type, content);
+    if (this.instance && this.status === 'connected') {
+      this.instance.send(message);
+    } else {
+      this.sendingMessageQueue.push(message);
+    }
+  }
+
+  private flush() {
+    this.sendingMessageQueue.forEach((message) => {
+      this.instance?.send(message);
+    });
+    this.sendingMessageQueue = [];
+  }
+
+  private connect() {
+    if (this.status === 'connecting') {
+      return;
+    }
+    const ws = new WebSocket(`ws://${window.location.host}/ws`);
+    this.instance = ws;
+    this.status = 'connecting';
+
+    ws.addEventListener('open', () => {
+      if (ws !== this.instance) return;
+      this.status = 'connected';
+      this.flush();
+      this.emit('open', undefined);
+    });
+
+    ws.addEventListener('close', () => {
+      if (ws !== this.instance) return;
+      this.status = 'lost';
+      this.emit('close', undefined);
+
+      setTimeout(() => {
+        if (this.status !== 'closed') {
+          this.connect();
+        }
+      }, 2000);
+    });
+
+    ws.addEventListener('message', (event) => {
+      if (ws !== this.instance) return;
+      console.log('message:', event);
+      const message = parseWebSocketMessageBody<WebSocketServerMessage>(event.data as string);
+      console.log('emit', message);
+      if (!message) return;
+
+      this.emit('message', message);
+    });
+  }
+
+  close() {
+    this.status = 'closed';
+    this.instance?.close();
+  }
 }

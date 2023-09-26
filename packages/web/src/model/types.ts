@@ -15,6 +15,7 @@ export type UserInfoDict = ReadonlyRecord<string, User | undefined>;
 export type ChatChannelDict = ReadonlyRecord<string, ChatChannel | undefined>;
 
 export type AppState = Readonly<{
+  online: boolean;
   userInfo: User | null;
   /// a userId -> user map, including offline users
   userInfoDict: ReadonlyRecord<string, User | undefined>;

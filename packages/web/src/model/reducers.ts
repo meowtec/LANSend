@@ -100,3 +100,11 @@ export const clearUnreadCount = defineMutateReducer((draft, userId: string) => {
     channel.unreadCount = 0;
   }
 });
+
+export const turnOnline = defineMutateReducer((draft) => {
+  draft.online = true;
+});
+
+export const turnOffline = defineMutateReducer((draft) => {
+  draft.online = false;
+});

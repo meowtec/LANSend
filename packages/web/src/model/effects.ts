@@ -2,25 +2,21 @@ import { nanoid } from 'nanoid';
 import { MAX_LONG_TEXT_LENGTH, MAX_TEXT_LENGTH } from '#/constants';
 import { addPreLongText, uploadFile } from '#/services/file';
 import { fetchUserInfo, fetchUsers, updateUserInfo } from '#/services/user';
-import { createWs, parseWebSocketMessageBody } from '#/utils/ws';
+import { WS } from '#/utils/ws';
 import { createDefineEffectFor } from '#/utils/zustand';
 import {
-  MailSendDetailed, MailType, User, WebSocketServerMessage,
+  MailSendDetailed, MailType, User,
 } from '../types';
 import type { UseAppStoreExtended } from '.';
 
 const defineEffect = createDefineEffectFor<UseAppStoreExtended>();
 
 export const connect = defineEffect((store) => {
-  const ws = createWs();
+  const ws = new WS();
 
   store.ws = ws;
 
-  ws.instance.addEventListener('message', (event) => {
-    console.log('message:', event);
-    const message = parseWebSocketMessageBody<WebSocketServerMessage>(event.data as string);
-    console.log('emit', message);
-    if (!message) return;
+  ws.on('message', (message) => {
     switch (message.type) {
       case 'users': {
         store.reducers.updateUsers(message.content);
@@ -36,7 +32,7 @@ export const connect = defineEffect((store) => {
     }
   });
 
-  ws.instance.addEventListener('open', () => {
+  ws.on('open', () => {
     void Promise.all([
       fetchUsers(),
       fetchUserInfo(),
@@ -44,11 +40,16 @@ export const connect = defineEffect((store) => {
       store.reducers.updateUsers(users);
       store.reducers.updateUserInfo(userInfo);
     });
+    store.reducers.turnOnline();
+  });
+
+  ws.on('close', () => {
+    store.reducers.turnOffline();
   });
 });
 
 export const disconnect = defineEffect((store) => {
-  store.ws?.instance.close();
+  store.ws?.close();
   store.ws = null;
 });
 

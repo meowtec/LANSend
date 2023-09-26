@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { bindEffects, bindMutateReducers } from '#/utils/zustand';
-import { WS } from '#/types';
+import { WS } from '#/utils/ws';
 import { initialState } from './default';
 import { AppState } from './types';
 import {
@@ -15,6 +15,8 @@ import {
   exitChat,
   exitMyProfile,
   clearUnreadCount,
+  turnOnline,
+  turnOffline,
 } from './reducers';
 import {
   connect, disconnect, modifyUserInfo, sendMessage,
@@ -51,6 +53,8 @@ export const reducers = {
     exitChat,
     exitMyProfile,
     clearUnreadCount,
+    turnOnline,
+    turnOffline,
   }, useAppStoreBase),
 };
 

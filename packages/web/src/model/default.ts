@@ -1,6 +1,7 @@
 import { AppState } from './types';
 
 export const initialState: AppState = {
+  online: false,
   userInfo: null,
   userInfoDict: {},
   users: [],

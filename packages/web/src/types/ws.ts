@@ -27,11 +27,3 @@ export type WebSocketClientMessage = GetMessageType<WebSocketClientMessageMap>;
 export type ClientMessageType = keyof WebSocketClientMessageMap;
 
 export type ServerMessageType = keyof WebSocketServerMessageMap;
-
-export interface WS {
-  instance: WebSocket;
-  sendMessage: <T extends ClientMessageType>(
-    type: T,
-    content: WebSocketClientMessageMap[T]
-  ) => void;
-}
